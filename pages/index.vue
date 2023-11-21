@@ -1,12 +1,39 @@
 <template>
   <v-container>
     <v-row>
+      <v-carousel
+        cycle
+        height="400"
+        hide-delimiter-background
+        show-arrows-on-hover
+      >
+        <v-carousel-item
+          v-for="(slide, i) in productList"
+          :key="i"
+        >
+          <v-sheet
+            height="100%"
+          >
+            <v-row
+              class="fill-height"
+              align="center"
+              justify="center"
+            >
+              <div class="text-h2">
+                <v-img :src="slide.image" width="400"/><br>
+              </div>
+            </v-row>
+          </v-sheet>
+        </v-carousel-item>
+      </v-carousel>
       <v-col v-for="(item, i) in productList" :key="i" cols="12" md="4">
         <v-card
           class="ma-3 align-center px-2"
           max-width="374"
         >
           <v-img
+            style="cursor: pointer;"
+            @click="redirect(item)"
             height="250"
             :src="item.image"
           ></v-img>
@@ -64,8 +91,12 @@ export default {
     getShopList(){
       this.$axios.$get('products/')
         .then((response) => {
-          this.productList = response.results
+            this.productList = response.results
           })
+    },
+    redirect (item) {
+      console.log(item)
+      this.$router.push('/detail/'+item.id)
     }
   }
 }

@@ -12,7 +12,7 @@
             size="32"
           />
 
-          <v-btn text>Anasayfa</v-btn>
+          <v-btn text @click="redirectToHome">Anasayfa</v-btn>
 
           <v-spacer></v-spacer>
           <v-btn
@@ -36,12 +36,16 @@
 
 <script>
 export default {
-    data: () => ({
-      links: [
-        'Kayıt Ol',
-        'Giriş Yap'
-
-      ],
-    }),
+  data: () => ({
+    links: [
+      'Kayıt Ol',
+      'Giriş Yap'
+    ],
+  }),
+  methods: {
+    redirectToHome(){
+      this.$router.push('/');
+    }
+  }
 }
 </script>
