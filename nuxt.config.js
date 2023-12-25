@@ -45,7 +45,8 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: 'http://yusuf.turgutlusoft.keenetic.pro:8888/api/pages/',
+    baseURL: 'http://192.168.1.50:8000/api/pages/',
+    // baseURL: 'http://yusuf.turgutlusoft.keenetic.pro:8000/api/pages/',
   },
   server:{
     host:'0.0.0.0'

@@ -87,13 +87,13 @@
                 class="px-0"
                 :style="{ 'font-weight': 'bold', 'font-size': '25px','color':'#ffdd00' }"
               >
-                {{ formatCurrency(item.price) }}
+                {{ moneyFormat(item.price) }}
               </v-card-text>
           </v-card-text>
           <v-card-actions>
             <v-btn
               block
-              class="addCart-btn mb-3 elevation-0"
+              class="add-cart-btn mb-3 elevation-0"
               @click="addCart(item)"
               :disabled="item?.count >= 1"
             >
@@ -107,7 +107,6 @@
         <v-pagination
           v-model="page"
           :length="length"
-          @input="changePage"
           circle
           color="#82c0cc"
           class="mt-5 mb-4"
@@ -118,6 +117,8 @@
 </template>
 
 <script>
+import { moneyFormat, truncateText } from "@/utils/helpers";
+
 export default {
   data(){
     return{
@@ -138,19 +139,27 @@ export default {
       length:0
     }
   },
-  created() {
-    this.getShoplist(1)
+  mounted() {
+    this.getShopList(1)
   },
   watch: {
     $route() {
-      this.getShoplist(1)
+      this.page = 1
+      this.getShopList()
+      window.scrollTo(0, 0)
     },
+    page () {
+      this.getShopList()
+      window.scrollTo(0, 0)
+    }
   },
   methods:{
-    getShoplist(page){
+    moneyFormat,
+    truncateText,
+    getShopList(){
       const params = {
         page_size: 12,
-        page,
+        page: this.page,
         search: this.$route.query.search,
         category: this.$route.query.category,
       }
@@ -158,43 +167,30 @@ export default {
         .then((response) => {
           this.productList = response.results
           this.length = Math.ceil(response.count/12)
-          window.scrollTo(0, 0)
         })
-    },
-    changePage(page) {
-      this.getShoplist(page)
-    },
-    formatCurrency(value) {
-      return new Intl.NumberFormat('tr-TR', {
-        style: 'currency',
-        currency: 'TRY',
-      }).format(value);
-    },
-    truncateText(text, length = 62) {
-      return text ? (text.length > length ? text.slice(0, length) + '...' : text) : '';
     },
     addCart(item) {
       item.count++;
       this.$axios.$patch(`products/${item.id}/`,{count: item.count})
-        .then(()=>{
-          this.getShoplist()
+        .then(() => {
+          this.getShopList()
           return this.dialog=true
         })
-
     },
     redirect (item) {
-      this.$router.push('/detail/'+item.id)
+      this.$router.push(`/detail/${item.id}`)
     }
   },
 }
 </script>
+
 <style scoped>
-.addCart-btn {
+.add-cart-btn {
   transition: background-color 0.3s; /* Geçiş efekti süresi */
   color: #82c0cc ;
 }
 
-.addCart-btn:hover {
+.add-cart-btn:hover {
   background-color: #82c0cc; /* Hover durumunda arkaplan rengi */
   color: white;
 }

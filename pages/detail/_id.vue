@@ -17,16 +17,26 @@
         </v-btn>
       </template>
     </v-snackbar>
+
     <v-row align="center" style="max-width: 101%">
-      <v-col md="6" class="text-center align-self-start">
+      <v-col class="text-center align-self-start">
         <v-img :src="mydata.image" alt="Ürün Resmi" width="100%" height="100%" />
       </v-col>
-      <v-col md="6" class="align-self-start">
+
+      <v-col class="align-self-start">
         <v-card class="elevation-3">
+
           <v-banner shaped >
-            <v-card-title class="px-0 py-0">{{ mydata.title }}</v-card-title>
+            <v-card-title class="px-0 py-0">
+              {{ mydata.title }}
+            </v-card-title>
           </v-banner>
-          <v-card-title>Kategori: {{ mydata.category?.name }}</v-card-title>
+
+          <v-card-title>
+            Kategori:
+            {{ mydata.category?.name }}
+          </v-card-title>
+
           <v-row>
             <v-col cols="4">
               <v-rating
@@ -45,33 +55,44 @@
               {{ mydata.star?.toFixed(1) }}
             </v-col>
           </v-row>
-            <v-card-title
-              class="ml-2"
-              :style="{ 'font-weight': 'bold', 'font-size': '25px','color':'#ffdd00' }"
-            >
-              {{ formatCurrency(mydata.price) }}
-            </v-card-title>
+
+          <v-card-title
+            class="ml-2"
+            :style="{ 'font-weight': 'bold', 'font-size': '25px','color':'#ffdd00' }"
+          >
+            {{ moneyFormat(mydata.price) }}
+          </v-card-title>
 
           <v-btn
-          style="width: 90%"
-          color="#82c0cc"
-          class="mb-3 mt-3 ml-6 addCart-btn"
-          @click="addBasket(mydata)"
-          :disabled="mydata.count >= 1"
+            style="width: 90%"
+            color="#82c0cc"
+            class="mb-3 mt-3 ml-6 addCart-btn"
+            @click="addBasket(mydata)"
+            :disabled="mydata.count >= 1"
           >
             <v-icon class="mr-2">mdi-cart-arrow-down</v-icon>
             {{ mydata?.count >= 1 ? 'Sepette Mevcut' : 'Sepete Ekle' }}
           </v-btn>
 
-          <v-banner shaped  >
-            <v-card-title class="px-0 py-0" style="font-size: 90%;cursor: pointer" @click="toggleFullText">{{ displayText }}</v-card-title>
+          <v-banner shaped>
+            <v-card-title
+              class="px-0 py-0"
+              style="font-size: 90%;cursor: pointer"
+              @click="this.isFullTextVisible = !this.isFullTextVisible"
+            >
+              {{ displayText }}
+            </v-card-title>
           </v-banner>
         </v-card>
       </v-col>
     </v-row>
+
     <v-container>
       <v-card class="mt-3">
-        <v-card-title class="mb-4">Yorum Ekle</v-card-title>
+        <v-card-title class="mb-4">
+          Yorum Ekle
+        </v-card-title>
+
         <v-form
           ref="comments"
           v-model="valid"
@@ -102,7 +123,9 @@
               class="ml-3"
             />
           </v-card-title>
+
           <v-card-title class="py-0 mb-1">Yorumunuz</v-card-title>
+
           <v-textarea
             v-model="comment"
             class="ml-3"
@@ -129,14 +152,16 @@
           </v-btn>
         </v-form>
       </v-card>
+
       <v-card class="mt-3">
         <v-card-title class="mb-4">Yorumlar</v-card-title>
+
         <v-card-text>
           <v-card v-for="(item, i) in mydata.comments" :key="i" class="mb-3">
             <v-list two-line>
               <v-list-item-content class="ml-3">
                 <v-card-title class="py-0 px-0">
-                  <v-card-subtitle class="px-0 py-0" style="font-size: 15px">{{ item.star?.toFixed(1) }}</v-card-subtitle>
+                  <v-card-subtitle class="px-0 py-0">{{ item.star?.toFixed(1) }}</v-card-subtitle>
                   <v-rating
                     :value="item.star"
                     color="#d90429"
@@ -149,16 +174,16 @@
                     class="ml-2"
                   />
                 </v-card-title>
-                {{ format_date(item.created_at) }}
+                {{ formatDate(item.created_at) }}
                 <v-list-item-title
-                  v-html="item.username"
                   class="font-weight-bold text-uppercase"
-                />
-                <v-tab
-                  style="cursor:none;color: black;pointer-events: none"
                 >
-                  <v-list-item-subtitle v-html="item.text" />
-                </v-tab>
+                  {{ item.username }}
+                </v-list-item-title>
+
+                <div class="pl-4">
+                  {{ item.text }}
+                </div>
               </v-list-item-content>
             </v-list>
           </v-card>
@@ -170,6 +195,8 @@
 
 <script>
 import moment from 'moment'
+import {moneyFormat} from "@/utils/helpers";
+
 export default {
 
   data () {
@@ -192,11 +219,8 @@ export default {
       ],
     }
   },
-  created() {
-    this.$axios.$get(`products/${this.$route.params.id}/`)
-      .then((response) => {
-        this.mydata = response
-      })
+  mounted () {
+    this.fetchProducts()
   },
   computed:{
     displayText() {
@@ -204,11 +228,12 @@ export default {
     },
   },
   methods: {
-    formatCurrency(value) {
-      return new Intl.NumberFormat('tr-TR', {
-        style: 'currency',
-        currency: 'TRY',
-      }).format(value);
+    moneyFormat,
+    fetchProducts () {
+      this.$axios.$get(`products/${this.$route.params.id}/`)
+        .then((response) => {
+          this.mydata = response
+        })
     },
     getShortenedText() {
       const maxLength = 200;
@@ -217,10 +242,7 @@ export default {
       }
       return this.mydata.description;
     },
-    toggleFullText() {
-      this.isFullTextVisible = !this.isFullTextVisible;
-    },
-    format_date(value){
+    formatDate(value){
       if (value) {
         return moment(String(value)).format('DD/MM/YYYY')
       }
@@ -228,24 +250,27 @@ export default {
     addBasket(item) {
       item.count++;
       this.$axios.$patch(`products/${item.id}/`, {count: item.count})
-      this.dialog=true
+      this.dialog = true
     },
     validate(id){
       if(!this.$refs.comments.validate()) {
         alert ('Boş bırakılamaz!')
         return
       }
+
       let payload={
         username: this.username,
         product:id,
         text: this.comment,
         star: this.commentRating ?? 0
       }
+
       this.$axios.$post(`comments/`,payload)
         .then((response) => {
           this.mydata.comments.push(response)
           alert('Yorumunuz için teşekkür ederiz ^^')
         })
+
       this.commentRating = 0
       this.$refs.comments.reset()
     }

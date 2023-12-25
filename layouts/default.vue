@@ -8,15 +8,12 @@
         color="#006d77EE"
       >
         <v-container class="py-0 fill-height">
-          <v-avatar
+          <img
             class="mr-10"
-            style="cursor: pointer"
-            color="grey darken-1"
-            size="50"
+            style="width: 50px;height: 50px;border-radius: 100%;cursor: pointer"
+            src="/images/logo.png"
             @click="redirect"
-          >
-            <v-img src="/images/logo.png"/>
-          </v-avatar>
+          />
           <v-btn
             v-for="(item,i) in tabs"
             :key="i"
@@ -28,22 +25,20 @@
             {{item.text}}
           </v-btn>
           <v-spacer/>
-          <v-responsive max-width="260">
-            <v-text-field
-              dark
-              label="Ara..."
-              dense
-              flat
-              hide-details
-              solo
-              solo-inverted
-              class="mr-8"
-              v-model="searchItem"
-              @keydown.enter="searchItems"
-              append-icon="mdi-magnify"
-              @click:append="searchItems"
-            />
-          </v-responsive>
+          <v-text-field
+            dark
+            label="Ara..."
+            dense
+            flat
+            hide-details
+            solo
+            solo-inverted
+            class="mr-8"
+            v-model="searchItem"
+            @keydown.enter="searchItems"
+            append-icon="mdi-magnify"
+            @click:append="searchItems"
+          />
           <v-btn
             @click="redirectToCart"
             class="text-capitalize"
@@ -53,7 +48,7 @@
           </v-btn>
         </v-container>
       </v-app-bar>
-      <nuxt></nuxt>
+      <nuxt />
     </v-main>
   </v-app>
 </template>
